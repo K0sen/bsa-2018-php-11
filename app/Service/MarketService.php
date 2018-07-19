@@ -4,6 +4,9 @@ namespace App\Service;
 
 use App\Entity\Lot;
 use App\Entity\Trade;
+use App\Repository\Contracts\CurrencyRepository;
+use App\Repository\Contracts\LotRepository;
+use App\Repository\Contracts\UserRepository;
 use App\Request\Contracts\AddLotRequest;
 use App\Request\Contracts\BuyLotRequest;
 use App\Response\Contracts\LotResponse;
@@ -19,10 +22,52 @@ use App\Service\Contracts\MarketService as IMarketService;
 
 class MarketService implements IMarketService
 {
+    private $lotRepository;
+    private $currencyRepository;
+    private $userRepository;
+
+    /**
+     * MarketService constructor.
+     *
+     * @param LotRepository      $lotRepository
+     * @param CurrencyRepository $currencyRepository
+     * @param UserRepository     $userRepository
+     */
+    public function __construct(LotRepository $lotRepository,
+                                CurrencyRepository $currencyRepository,
+                                UserRepository $userRepository
+    ) {
+        $this->lotRepository = $lotRepository;
+        $this->currencyRepository = $currencyRepository;
+        $this->userRepository = $userRepository;
+    }
+
     /** {@inheritdoc} */
     public function addLot(AddLotRequest $lotRequest): Lot
     {
-        // TODO: Implement addLot() method.
+        $activeLot = $this->lotRepository
+            ->findBySellerAndCurrency($lotRequest->getSellerId(), $lotRequest->getCurrencyId());
+        if ($activeLot) {
+            throw new ActiveLotExistsException('Active lot of the user and that currency is already exists');
+        }
+
+        if ($lotRequest->getDateTimeOpen() > $lotRequest->getDateTimeClose()) {
+            throw new IncorrectTimeCloseException('Time close cannot be smaller then time open');
+        }
+
+        if ($lotRequest->getPrice() < 0) {
+            throw new IncorrectPriceException('Lot price is incorrect!');
+        }
+
+        return $this->lotRepository->add(
+            new Lot([
+                'currency_id' => $lotRequest->getCurrencyId(),
+                'seller_id' => $lotRequest->getSellerId(),
+                'date_time_open' => $lotRequest->getDateTimeOpen(),
+                'date_time_close' => $lotRequest->getDateTimeClose(),
+                'price' => $lotRequest->getPrice()
+            ])
+        );
     }
 
     /** {@inheritdoc} */

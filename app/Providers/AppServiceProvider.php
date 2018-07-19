@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Entity\Lot;
 use App\Repository\Contracts\{
     CurrencyRepository as ICurrencyRepository,
     LotRepository as ILotRepository,
@@ -10,6 +11,8 @@ use App\Repository\Contracts\{
     UserRepository as IUserRepository,
     WalletRepository as IWalletRepository
 };
+use App\Response\LotResponse;
+use App\Response\Contracts\LotResponse as ILotResponse;
 use App\Service\Contracts\{
     CurrencyService as ICurrencyService,
     WalletService as IWalletService,
@@ -21,7 +24,6 @@ use App\Repository\{
 use App\Service\{
     CurrencyService, MarketService, WalletService
 };
-use App\User;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
@@ -40,14 +42,17 @@ class AppServiceProvider extends ServiceProvider
             $repository = app(ICurrencyRepository::class);
             return new CurrencyService($repository);
         });
-//        app()->bind(IWalletService::class, function () {
-//            $repository = app(IWalletRepository::class);
-//            return new WalletService($repository);
-//        });
-//        app()->bind(ICurrencyService::class, function () {
-//            $repository = app(ICurrencyRepository::class);
-//            return new CurrencyService($repository);
-//        });
+        app()->bind(IWalletService::class, function () {
+            $walletRepository = app(IWalletRepository::class);
+            $moneyRepository = app(IWalletRepository::class);
+            return new WalletService($walletRepository, $moneyRepository);
+        });
+        app()->bind(IMarketService::class, function () {
+            $lotRepository = app(ILotRepository::class);
+            $currencyRepository = app(ICurrencyRepository::class);
+            $userRepository = app(IUserRepository::class);
+            return new MarketService($lotRepository, $currencyRepository, $userRepository);
+        });
     }
 
     /**
@@ -63,5 +68,8 @@ class AppServiceProvider extends ServiceProvider
         app()->bind(ITradeRepository::class, TradeRepository::class);
         app()->bind(IUserRepository::class, UserRepository::class);
         app()->bind(IWalletRepository::class, WalletRepository::class);
+        app()->bind(ILotResponse::class, function (Lot $lot) {
+            return new LotResponse($lot);
+        });
     }
 }

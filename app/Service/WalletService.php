@@ -20,6 +20,7 @@ class WalletService implements IWalletService
      * WalletService constructor.
      *
      * @param WalletRepository $walletRepository
+     * @param MoneyRepository  $moneyRepository
      */
     public function __construct(WalletRepository $walletRepository, MoneyRepository $moneyRepository)
     {
@@ -42,25 +43,25 @@ class WalletService implements IWalletService
 
     public function addMoney(MoneyRequest $moneyRequest): Money
     {
-        if ($money = $this->moneyRepository->findByWalletAndCurrency(
-            $moneyRequest->getWalletId(), $moneyRequest->getCurrencyId()
-        )) {
-            if ($money->amount > 0) {
-                $money->amount += $moneyRequest->getAmount();
-                return $this->moneyRepository->save($money);
-            }
-
-            return $money;
-        } else {
+        $money = $this->moneyRepository
+            ->findByWalletAndCurrency($moneyRequest->getWalletId(), $moneyRequest->getCurrencyId());
+        if (!$money) {
             throw new ModelNotFoundException('Money with the wallet or the user not found');
         }
+
+        if ($money->amount > 0) {
+            $money->amount += $moneyRequest->getAmount();
+            return $this->moneyRepository->save($money);
+        }
+
+        return $money;
     }
 
     public function takeMoney(MoneyRequest $moneyRequest): Money
     {
-        if ($money = $this->moneyRepository->findByWalletAndCurrency(
-            $moneyRequest->getWalletId(), $moneyRequest->getCurrencyId()
-        )) {
+        $money = $this->moneyRepository
+            ->findByWalletAndCurrency($moneyRequest->getWalletId(), $moneyRequest->getCurrencyId());
+        if ($money) {
             if ($money->amount >= $moneyRequest->getAmount()) {
                 $money->amount -= $moneyRequest->getAmount();
                 return $this->moneyRepository->save($money);

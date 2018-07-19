@@ -9,21 +9,32 @@ class LotRepository implements ILotRepository
 {
     public function add(Lot $lot): Lot
     {
-        // TODO: Implement add() method.
+        return Lot::create([
+            'currency_id' => $lot->currency_id,
+            'seller_id' => $lot->seller_id,
+            'date_time_open' => $lot->date_time_open,
+            'date_time_close' => $lot->date_time_close,
+            'price' => $lot->price
+        ]);
     }
 
     public function getById(int $id): ?Lot
     {
-        // TODO: Implement getById() method.
+        return Lot::find($id);
     }
 
     public function findAll()
     {
-        // TODO: Implement findAll() method.
+        return Lot::all();
     }
 
     public function findActiveLot(int $userId): ?Lot
     {
-        // TODO: Implement findActiveLot() method.
+        return Lot::where(['seller_id' => $userId])->first();
+    }
+
+    public function findBySellerAndCurrency(int $userId, int $currencyId): ?Lot
+    {
+        return Lot::where(['seller_id' => $userId, 'currency_id' => $currencyId])->first();
     }
 }
