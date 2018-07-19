@@ -31,6 +31,5 @@ class TradeCreated extends Mailable
      */
     public function build()
     {
-
     }
 }
