@@ -62,6 +62,6 @@ class AppServiceProvider extends ServiceProvider
         app()->bind(IMoneyRepository::class, MoneyRepository::class);
         app()->bind(ITradeRepository::class, TradeRepository::class);
         app()->bind(IUserRepository::class, UserRepository::class);
-        app()->bind(IWalletRepository::class, WalletService::class);
+        app()->bind(IWalletRepository::class, WalletRepository::class);
     }
 }

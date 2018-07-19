@@ -24,4 +24,8 @@ class CurrencyServiceTest extends TestCase
         $currencyService = new CurrencyService($repositoryStub);
         $this->assertEquals($currency, $currencyService->addCurrency($requestStub));
     }
+
+    public function testTest()
+    {
+    }
 }

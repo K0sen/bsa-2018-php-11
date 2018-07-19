@@ -2,26 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\Money;
 use App\Entity\Wallet;
-use App\Request\Contracts\CreateWalletRequest;
-use App\Request\Contracts\MoneyRequest;
-use App\Service\Contracts\WalletService as IWalletService;
+use App\Repository\Contracts\WalletRepository as IWalletRepository;
 
-class WalletRepository implements IWalletService
+class WalletRepository implements IWalletRepository
 {
-    public function addWallet(CreateWalletRequest $walletRequest): Wallet
+    public function add(Wallet $wallet): Wallet
     {
-        // TODO: Implement addWallet() method.
+        return Wallet::create(['user_id' => $wallet->user_id]);
     }
 
-    public function addMoney(MoneyRequest $moneyRequest): Money
+    public function findByUser(int $userId): ?Wallet
     {
-        // TODO: Implement addMoney() method.
-    }
-
-    public function takeMoney(MoneyRequest $moneyRequest): Money
-    {
-        // TODO: Implement takeMoney() method.
+        return Wallet::where('user_id', $userId)->first();
     }
 }

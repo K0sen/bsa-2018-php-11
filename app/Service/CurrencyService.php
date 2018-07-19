@@ -13,6 +13,7 @@ class CurrencyService implements ICurrencyService
 
     /**
      * CurrencyService constructor.
+     *
      * @param CurrencyRepository $currencyRepository
      */
     public function __construct(CurrencyRepository $currencyRepository)
@@ -22,13 +23,8 @@ class CurrencyService implements ICurrencyService
 
     public function addCurrency(AddCurrencyRequest $currencyRequest) : Currency
     {
-//        $currency = new Currency();
-//        $currency->name = $currencyRequest->getName();
-
         return $this->currencyRepository->add(
-            new Currency([
-                'name'  => $currencyRequest->getName()
-            ])
+            new Currency(['name'  => $currencyRequest->getName()])
         );
     }
 }

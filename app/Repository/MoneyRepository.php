@@ -9,11 +9,14 @@ class MoneyRepository implements IMoneyRepository
 {
     public function save(Money $money): Money
     {
-        // TODO: Implement save() method.
+        return Money::updateOrCreate(
+            ['wallet_id' => $money->wallet_id, 'currency_id' => $money->currency_id],
+            ['amount' => $money->amount]
+        );
     }
 
     public function findByWalletAndCurrency(int $walletId, int $currencyId): ?Money
     {
-        // TODO: Implement findByWalletAndCurrency() method.
+        return Money::where(['wallet_id' => $walletId, 'currency_id' => $currencyId])->first();
     }
 }
