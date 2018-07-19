@@ -4,6 +4,7 @@ namespace App\Response;
 
 
 use App\Entity\Lot;
+use App\Repository\Contracts\MoneyRepository;
 use App\Response\Contracts\LotResponse as ILotResponse;
 
 class LotResponse implements ILotResponse
@@ -19,14 +20,16 @@ class LotResponse implements ILotResponse
     /**
      * LotResponse constructor.
      *
-     * @param Lot $lot
+     * @param MoneyRepository $moneyRepository
+     * @param Lot             $lot
      */
-    public function __construct(Lot $lot)
+    public function __construct(MoneyRepository $moneyRepository, Lot $lot)
     {
+        $money = $moneyRepository->findByUserAndCurrency($lot->seller()->id, $lot->currency()->id);
         $this->id = $lot->id;
         $this->userName = $lot->seller()->name;
         $this->currencyName = $lot->currency()->name;
-        $this->amount = $lot->amount;
+        $this->amount = $money->amount;
         $this->dateTimeOpen = $lot->getDateTimeOpen();
         $this->dateTimeClose = $lot->getDateTimeClose();
         $this->price = $lot->price;

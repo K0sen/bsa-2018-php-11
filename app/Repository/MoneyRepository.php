@@ -19,4 +19,9 @@ class MoneyRepository implements IMoneyRepository
     {
         return Money::where(['wallet_id' => $walletId, 'currency_id' => $currencyId])->first();
     }
+
+    public function findByUserAndCurrency(int $userId, int $currencyId): ?Money
+    {
+        return Money::where(['user_id' => $userId, 'currency_id' => $currencyId])->first();
+    }
 }

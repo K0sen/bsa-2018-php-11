@@ -62,6 +62,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // model generator
+        if ($this->app->environment() == 'local') {
+            $this->app->register(\Reliese\Coders\CodersServiceProvider::class);
+        }
+
         app()->bind(ICurrencyRepository::class, CurrencyRepository::class);
         app()->bind(ILotRepository::class, LotRepository::class);
         app()->bind(IMoneyRepository::class, MoneyRepository::class);

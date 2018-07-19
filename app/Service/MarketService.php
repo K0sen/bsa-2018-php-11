@@ -79,12 +79,21 @@ class MarketService implements IMarketService
     /** {@inheritdoc} */
     public function getLot(int $id): LotResponse
     {
-        // TODO: Implement getLot() method.
+        $lot = $this->lotRepository->getById($id);
+        if (!$lot) {
+            throw new LotDoesNotExistException('Lot not found');
+        }
+
+        return app(LotResponse::class, $lot);
     }
 
     /** {@inheritdoc} */
     public function getLotList(): array
     {
-        // TODO: Implement getLotList() method.
+        $lots = $this->lotRepository->findAll();
+
+        return array_map(function($lot) {
+            return app(LotResponse::class, $lot);
+        }, $lots);
     }
 }
