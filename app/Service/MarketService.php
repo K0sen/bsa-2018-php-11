@@ -151,7 +151,7 @@ class MarketService implements IMarketService
         if (!$buyerMoney) {
             throw new \LogicException('No buyer money found');
         } else if (!$sellerMoney) {
-            throw new \LogicException('No buyer money found');
+            throw new \LogicException('No seller money found');
         }
 
         $this->walletService->takeMoney(
