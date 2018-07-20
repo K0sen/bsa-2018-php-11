@@ -154,8 +154,9 @@ class MarketService implements IMarketService
             throw new \LogicException('No seller money found');
         }
 
+        // don't really understand how should happened the process
         $this->walletService->takeMoney(
-            new MoneyRequest($buyerMoney->id, $currencyId, $amount)
+            new MoneyRequest($buyerMoney->id, $currencyId, 1)
         );
         $this->walletService->addMoney(
             new MoneyRequest($sellerMoney->id, $currencyId, $amount)
@@ -170,7 +171,7 @@ class MarketService implements IMarketService
             throw new LotDoesNotExistException('Lot not found');
         }
 
-        return app(LotResponse::class, $lot);
+        return new \App\Response\LotResponse($lot, $this->moneyRepository);
     }
 
     /** {@inheritdoc} */
@@ -178,8 +179,8 @@ class MarketService implements IMarketService
     {
         $lots = $this->lotRepository->findAll();
 
-        return array_map(function($lot) {
-            return app(LotResponse::class, $lot);
-        }, $lots);
+        return $lots->map(function($lot) {
+            return new \App\Response\LotResponse($lot, $this->moneyRepository);
+        })->toArray();
     }
 }

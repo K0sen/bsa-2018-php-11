@@ -57,10 +57,6 @@ class AppServiceProvider extends ServiceProvider
                 app(IWalletService::class)
             );
         });
-
-        app()->bind(ILotResponse::class, function (Lot $lot) {
-            return new LotResponse($lot, app(IMoneyRepository::class));
-        });
     }
 
     /**

@@ -6,6 +6,7 @@ namespace App\Response;
 use App\Entity\Lot;
 use App\Repository\Contracts\MoneyRepository;
 use App\Response\Contracts\LotResponse as ILotResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LotResponse implements ILotResponse
 {
@@ -25,17 +26,19 @@ class LotResponse implements ILotResponse
      */
     public function __construct(Lot $lot, MoneyRepository $moneyRepository)
     {
-        $money = $moneyRepository->findByUserAndCurrency($lot->seller()->id, $lot->currency()->id);
+        $money = $moneyRepository->findByUserAndCurrency($lot->seller->id, $lot->currency->id);
+        if (!$money) {
+            throw new ModelNotFoundException('Money not found');
+        }
 
         $this->id = $lot->id;
-        $this->userName = $lot->seller()->name;
-        $this->currencyName = $lot->currency()->name;
+        $this->userName = $lot->seller->name;
+        $this->currencyName = $lot->currency->name;
         $this->amount = $money->amount;
         $this->dateTimeOpen = $lot->getDateTimeOpen();
         $this->dateTimeClose = $lot->getDateTimeClose();
         $this->price = $lot->price;
     }
-
 
     public function getId(): int
     {
