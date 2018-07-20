@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 app(IUserRepository::class),
                 app(ICurrencyRepository::class),
                 app(ITradeRepository::class),
-                app(IWalletRepository::class),
+                app(IMoneyRepository::class),
                 app(IWalletService::class)
             );
         });

@@ -7,6 +7,7 @@ use App\Entity\Trade;
 use App\Mail\TradeCreated;
 use App\Repository\Contracts\CurrencyRepository;
 use App\Repository\Contracts\LotRepository;
+use App\Repository\Contracts\MoneyRepository;
 use App\Repository\Contracts\TradeRepository;
 use App\Repository\Contracts\UserRepository;
 use App\Repository\Contracts\WalletRepository;
@@ -33,7 +34,7 @@ class MarketService implements IMarketService
     private $userRepository;
     private $currencyRepository;
     private $tradeRepository;
-    private $walletRepository;
+    private $moneyRepository;
     private $walletService;
 
     /**
@@ -43,21 +44,21 @@ class MarketService implements IMarketService
      * @param UserRepository     $userRepository
      * @param CurrencyRepository $currencyRepository
      * @param TradeRepository    $tradeRepository
-     * @param WalletRepository   $walletRepository
+     * @param MoneyRepository    $moneyRepository
      * @param WalletService      $walletService
      */
     public function __construct(LotRepository $lotRepository,
                                 UserRepository $userRepository,
                                 CurrencyRepository $currencyRepository,
                                 TradeRepository $tradeRepository,
-                                WalletRepository $walletRepository,
+                                MoneyRepository $moneyRepository,
                                 WalletService $walletService
     ) {
         $this->lotRepository = $lotRepository;
         $this->userRepository = $userRepository;
         $this->currencyRepository = $currencyRepository;
         $this->tradeRepository = $tradeRepository;
-        $this->walletRepository = $walletRepository;
+        $this->moneyRepository = $moneyRepository;
         $this->walletService = $walletService;
     }
 
@@ -66,8 +67,14 @@ class MarketService implements IMarketService
     {
         $activeLot = $this->lotRepository
             ->findBySellerAndCurrency($lotRequest->getSellerId(), $lotRequest->getCurrencyId());
+        $money = $this->moneyRepository
+            ->findByUserAndCurrency($lotRequest->getSellerId(), $lotRequest->getCurrencyId());
         if ($activeLot) {
             throw new ActiveLotExistsException('Active lot of the user and that currency is already exists');
+        }
+
+        if (!$money || $money->amount < 1) {
+            throw new IncorrectPriceException('User has no money with given currency');
         }
 
         if ($lotRequest->getDateTimeOpen() > $lotRequest->getDateTimeClose()) {
@@ -139,20 +146,20 @@ class MarketService implements IMarketService
      */
     public function makeExchange(int $sellerId, User $buyer, float $amount, int $currencyId): void
     {
-        $buyerWallet = $this->walletRepository->findByUserAndCurrency($buyer->id, $currencyId);
-        $sellerWallet = $this->walletRepository->findByUserAndCurrency($sellerId, $currencyId);
-        if (!$buyerWallet || !$sellerWallet) {
-            throw new \LogicException('No buyer or seller wallet found');
+        $buyerMoney = $this->moneyRepository->findByUserAndCurrency($buyer->id, $currencyId);
+        $sellerMoney = $this->moneyRepository->findByUserAndCurrency($sellerId, $currencyId);
+        if (!$buyerMoney) {
+            throw new \LogicException('No buyer money found');
+        } else if (!$sellerMoney) {
+            throw new \LogicException('No buyer money found');
         }
 
-        $a = $this->walletService->takeMoney(
-            new MoneyRequest($buyerWallet->id, $currencyId, $amount)
+        $this->walletService->takeMoney(
+            new MoneyRequest($buyerMoney->id, $currencyId, $amount)
         );
-        $b = $this->walletService->addMoney(
-            new MoneyRequest($sellerWallet->id, $currencyId, $amount)
+        $this->walletService->addMoney(
+            new MoneyRequest($sellerMoney->id, $currencyId, $amount)
         );
-
-        dump($a, $b);
     }
 
     /** {@inheritdoc} */
