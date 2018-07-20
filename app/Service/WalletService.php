@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Money;
 use App\Entity\Wallet;
+use App\Exceptions\MarketException\IncorrectPriceException;
 use App\Repository\Contracts\MoneyRepository;
 use App\Repository\Contracts\WalletRepository;
 use App\Request\Contracts\CreateWalletRequest;
@@ -49,27 +50,26 @@ class WalletService implements IWalletService
             throw new ModelNotFoundException('Money with the wallet or the user not found');
         }
 
-        if ($money->amount > 0) {
-            $money->amount += $moneyRequest->getAmount();
-            return $this->moneyRepository->save($money);
+        if ($money->amount <= 0) {
+            throw new IncorrectPriceException('You cannot add a negative value');
         }
 
-        return $money;
+        $money->amount += $moneyRequest->getAmount();
+        return $this->moneyRepository->save($money);
     }
 
     public function takeMoney(MoneyRequest $moneyRequest): Money
     {
         $money = $this->moneyRepository
             ->findByWalletAndCurrency($moneyRequest->getWalletId(), $moneyRequest->getCurrencyId());
-        if ($money) {
-            if ($money->amount >= $moneyRequest->getAmount()) {
-                $money->amount -= $moneyRequest->getAmount();
-                return $this->moneyRepository->save($money);
-            }
-
-            return $money;
-        } else {
+        if (!$money) {
             throw new ModelNotFoundException('Money with the wallet or the user not found');
         }
+
+        if ($money->amount < $moneyRequest->getAmount()) {
+            throw new IncorrectPriceException('Have not enough money');
+        }
+
+        return $this->moneyRepository->save($money);
     }
 }

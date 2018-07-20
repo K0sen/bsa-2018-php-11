@@ -14,19 +14,19 @@ class CurrencyRepository implements ICurrencyRepository
 
     public function getById(int $id): ?Currency
     {
-        // TODO: Implement getById() method.
+        return Currency::find($id);
     }
 
     public function getCurrencyByName(string $name): ?Currency
     {
-        // TODO: Implement getCurrencyByName() method.
+        return Currency::where('name', $name)->first();
     }
 
     /**
      * @return Currency[]
      */
-    public function findAll()
+    public function findAll(): array
     {
-        // TODO: Implement findAll() method.
+        return Currency::all();
     }
 }

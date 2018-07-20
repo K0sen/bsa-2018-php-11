@@ -44,14 +44,22 @@ class AppServiceProvider extends ServiceProvider
         });
         app()->bind(IWalletService::class, function () {
             $walletRepository = app(IWalletRepository::class);
-            $moneyRepository = app(IWalletRepository::class);
+            $moneyRepository = app(IMoneyRepository::class);
             return new WalletService($walletRepository, $moneyRepository);
         });
         app()->bind(IMarketService::class, function () {
-            $lotRepository = app(ILotRepository::class);
-            $currencyRepository = app(ICurrencyRepository::class);
-            $userRepository = app(IUserRepository::class);
-            return new MarketService($lotRepository, $currencyRepository, $userRepository);
+            return new MarketService(
+                app(ILotRepository::class),
+                app(IUserRepository::class),
+                app(ICurrencyRepository::class),
+                app(ITradeRepository::class),
+                app(IWalletRepository::class),
+                app(IWalletService::class)
+            );
+        });
+
+        app()->bind(ILotResponse::class, function (Lot $lot) {
+            return new LotResponse($lot, app(IMoneyRepository::class));
         });
     }
 
@@ -63,7 +71,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         // model generator
-        if ($this->app->environment() == 'local') {
+        if ($this->app->environment() === 'local') {
             $this->app->register(\Reliese\Coders\CodersServiceProvider::class);
         }
 
@@ -73,8 +81,5 @@ class AppServiceProvider extends ServiceProvider
         app()->bind(ITradeRepository::class, TradeRepository::class);
         app()->bind(IUserRepository::class, UserRepository::class);
         app()->bind(IWalletRepository::class, WalletRepository::class);
-        app()->bind(ILotResponse::class, function (Lot $lot) {
-            return new LotResponse($lot);
-        });
     }
 }

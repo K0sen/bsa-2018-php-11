@@ -9,6 +9,10 @@ class TradeRepository implements ITradeRepository
 {
     public function add(Trade $trade): Trade
     {
-        // TODO: Implement add() method.
+        return Trade::create([
+            'user_id' => $trade->user_id,
+            'lot_id' => $trade->lot_id,
+            'amount' => $trade->amount
+        ]);
     }
 }

@@ -23,9 +23,10 @@ class LotResponse implements ILotResponse
      * @param MoneyRepository $moneyRepository
      * @param Lot             $lot
      */
-    public function __construct(MoneyRepository $moneyRepository, Lot $lot)
+    public function __construct(Lot $lot, MoneyRepository $moneyRepository)
     {
         $money = $moneyRepository->findByUserAndCurrency($lot->seller()->id, $lot->currency()->id);
+
         $this->id = $lot->id;
         $this->userName = $lot->seller()->name;
         $this->currencyName = $lot->currency()->name;
@@ -58,12 +59,12 @@ class LotResponse implements ILotResponse
 
     public function getDateTimeOpen(): string
     {
-        return $this->dateTimeOpen;
+        return date('Y-m-d H:i:s', $this->dateTimeOpen);
     }
 
     public function getDateTimeClose(): string
     {
-        return $this->dateTimeClose;
+        return date('Y-m-d H:i:s', $this->dateTimeClose);
     }
 
     public function getPrice(): string

@@ -7,18 +7,36 @@ use App\Request\Contracts\BuyLotRequest as IBuyLotRequest;
 
 class BuyLotRequest implements IBuyLotRequest
 {
+    private $userId;
+    private $lotId;
+    private $amount;
+
+    /**
+     * BuyLotRequest constructor.
+     *
+     * @param int   $userId
+     * @param int   $lotId
+     * @param float $amount
+     */
+    public function __construct(int $userId, int $lotId, float $amount)
+    {
+        $this->userId = $userId;
+        $this->lotId = $lotId;
+        $this->amount = $amount;
+    }
+
     public function getUserId(): int
     {
-        // TODO: Implement getUserId() method.
+        return $this->userId;
     }
 
     public function getLotId(): int
     {
-        // TODO: Implement getLotId() method.
+        return $this->lotId;
     }
 
     public function getAmount(): float
     {
-        // TODO: Implement getAmount() method.
+        return $this->amount;
     }
 }

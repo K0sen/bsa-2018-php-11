@@ -8,17 +8,7 @@ use App\Request\Contracts\AddCurrencyRequest;
 use App\Service\CurrencyService;
 use Tests\TestCase;
 
-class WalletServiceTest extends TestCase
+class MarketServiceTest extends TestCase
 {
-    public function testAddWallet()
-    {
-    }
 
-    public function testAddMoney()
-    {
-    }
-
-    public function testTakeMoney()
-    {
-    }
 }

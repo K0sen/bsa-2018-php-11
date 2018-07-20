@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Money;
 use App\Repository\Contracts\MoneyRepository as IMoneyRepository;
+use Illuminate\Support\Facades\DB;
 
 class MoneyRepository implements IMoneyRepository
 {
@@ -22,6 +23,6 @@ class MoneyRepository implements IMoneyRepository
 
     public function findByUserAndCurrency(int $userId, int $currencyId): ?Money
     {
-        return Money::where(['user_id' => $userId, 'currency_id' => $currencyId])->first();
+//        return Money::where(['user_id' => $userId, 'currency_id' => $currencyId])->first();
     }
 }
