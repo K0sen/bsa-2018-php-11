@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,8 +14,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Auth::routes();
-
-Route::get('/market/lots/add', 'Lot\LotController@addLotForm')->name('home');
-Route::post('/market/lots/store', 'Lot\LotController@addLot')->name('addLot');

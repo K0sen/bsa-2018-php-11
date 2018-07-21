@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,20 +32,5 @@ class Lot extends Model
         } else {
             return (new Carbon($this->date_time_close))->getTimestamp();
         }
-    }
-
-    public function currency()
-    {
-        return $this->belongsTo(Currency::class, 'currency_id');
-    }
-
-    public function seller()
-    {
-        return $this->belongsTo(User::class, 'seller_id');
-    }
-
-    public function trades()
-    {
-        return $this->hasMany(Trade::class);
     }
 }
