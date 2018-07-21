@@ -2,18 +2,22 @@
 
 namespace Tests\Unit;
 
+use App\Entity\Currency;
 use App\Entity\Lot;
 use App\Entity\Money;
 use App\Exceptions\MarketException\ActiveLotExistsException;
 use App\Repository\Contracts\{
     CurrencyRepository, LotRepository, MoneyRepository, TradeRepository, UserRepository
 };
+use App\Request\BuyLotRequest;
+use App\Request\Contracts\AddCurrencyRequest;
 use App\Request\Contracts\AddLotRequest;
 use App\Service\Contracts\WalletService;
+use App\Service\CurrencyService;
 use App\Service\MarketService;
 use Tests\TestCase;
 
-class NewMarketServiceTest extends TestCase
+class MarketServiceTest extends TestCase
 {
     private $lotRepository;
     private $userRepository;
@@ -102,7 +106,6 @@ class NewMarketServiceTest extends TestCase
     }
 
     // TODO
-
 
 //    public function testBuyLot()
 //    {

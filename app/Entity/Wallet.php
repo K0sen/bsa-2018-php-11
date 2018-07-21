@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Wallet extends Model
@@ -10,4 +11,14 @@ class Wallet extends Model
         "id",
         "user_id"
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function money()
+    {
+        return $this->hasMany(Money::class);
+    }
 }
