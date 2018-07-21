@@ -21,6 +21,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - ./vendor/laravel/dusk/bin/chromedriver-linux &
   - php artisan key:generate
+  - composer dump-autoload
   - php artisan migrate --seed
   - php artisan serve --host=127.0.0.1 --port=8000 &
 
