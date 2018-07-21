@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Entity\Lot;
 use App\Repository\Contracts\{
     CurrencyRepository as ICurrencyRepository,
     LotRepository as ILotRepository,
@@ -11,8 +10,6 @@ use App\Repository\Contracts\{
     UserRepository as IUserRepository,
     WalletRepository as IWalletRepository
 };
-use App\Response\LotResponse;
-use App\Response\Contracts\LotResponse as ILotResponse;
 use App\Service\Contracts\{
     CurrencyService as ICurrencyService,
     WalletService as IWalletService,

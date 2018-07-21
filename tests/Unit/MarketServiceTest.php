@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Entity\Currency;
 use App\Entity\Lot;
 use App\Entity\Money;
+use App\Exceptions\MarketException\ActiveLotExistsException;
 use App\Repository\Contracts\{
     CurrencyRepository, LotRepository, MoneyRepository, TradeRepository, UserRepository
 };
@@ -40,11 +41,44 @@ class MarketServiceTest extends TestCase
     public function testAddLot()
     {
         $money = factory(Money::class)->make();
-        $activeLot = factory(Lot::class)->make();
+        $lot = factory(Lot::class)->make();
         $requestStub = $this->createMock(AddLotRequest::class);
 
         $this->lotRepository->method('findBySellerAndCurrency')
             ->willReturn(null);
+        $this->lotRepository->method('add')
+            ->willReturn($lot);
+
+        $this->moneyRepository->method('findByUserAndCurrency')
+            ->willReturn($money);
+
+        $requestStub->method('getDateTimeOpen')
+            ->willReturn(1);
+        $requestStub->method('getDateTimeClose')
+            ->willReturn(2);
+        $requestStub->method('getPrice')
+            ->willReturn(5);
+
+        $marketService = new MarketService(
+            $this->lotRepository,
+            $this->userRepository,
+            $this->currencyRepository,
+            $this->tradeRepository,
+            $this->moneyRepository,
+            $this->walletService
+        );
+
+        $this->assertEquals($lot, $marketService->addLot($requestStub));
+    }
+
+    public function testAddActiveLot()
+    {
+        $money = factory(Money::class)->make();
+        $activeLot = factory(Lot::class)->make();
+        $requestStub = $this->createMock(AddLotRequest::class);
+
+        $this->lotRepository->method('findBySellerAndCurrency')
+            ->willReturn($activeLot);
         $this->lotRepository->method('add')
             ->willReturn($activeLot);
 
@@ -67,9 +101,50 @@ class MarketServiceTest extends TestCase
             $this->walletService
         );
 
-        $this->assertEquals($activeLot, $marketService->addLot($requestStub));
+        $this->expectException(ActiveLotExistsException::class);
+        $marketService->addLot($requestStub);
     }
-    
+
+    // TODO
+
+//    public function testBuyLot()
+//    {
+//        $user = factory(User::class)->make();
+//        $lot = factory(Lot::class)->make();
+//        $requestStub = $this->createMock(BuyLotRequest::class);
+//        $requestStub->method('getAmount')
+//            ->willReturn($lot->price + 2);
+//
+//        $this->userRepository->method('getById')
+//            ->willReturn($user->id);
+//
+//        $this->lotRepository->method('getById')
+//            ->willReturn($lot->id);
+//
+//
+//        $this->moneyRepository->method('findByUserAndCurrency')
+//            ->willReturn($money);
+//
+//        $requestStub->method('getDateTimeOpen')
+//            ->willReturn(1);
+//        $requestStub->method('getDateTimeClose')
+//            ->willReturn(2);
+//        $requestStub->method('getPrice')
+//            ->willReturn(5);
+//
+//        $marketService = new MarketService(
+//            $this->lotRepository,
+//            $this->userRepository,
+//            $this->currencyRepository,
+//            $this->tradeRepository,
+//            $this->moneyRepository,
+//            $this->walletService
+//        );
+//
+//        $this->expectException(ActiveLotExistsException::class);
+//        $marketService->addLot($requestStub);
+//    }
+
 //    public function testTest()
 //    {
 //        $request = new AddLotRequest(3, 3, strtotime('-1day'), strtotime('+2days'), 2.33);

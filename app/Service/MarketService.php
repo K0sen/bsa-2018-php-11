@@ -154,7 +154,7 @@ class MarketService implements IMarketService
             throw new \LogicException('No seller money found');
         }
 
-        // don't really understand how should happened the process
+        // don't really understand how should happened the process... Don't have much time to mess up here
         $this->walletService->takeMoney(
             new MoneyRequest($buyerMoney->id, $currencyId, 1)
         );
