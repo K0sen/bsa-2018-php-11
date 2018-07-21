@@ -10,14 +10,4 @@ class Currency extends Model
         "id",
         "name"
     ];
-
-    public function lots()
-    {
-        return $this->hasMany(\App\Models\Lot::class);
-    }
-
-    public function money()
-    {
-        return $this->hasMany(\App\Models\Money::class);
-    }
 }
