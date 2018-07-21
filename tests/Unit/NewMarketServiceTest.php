@@ -13,7 +13,7 @@ use App\Service\Contracts\WalletService;
 use App\Service\MarketService;
 use Tests\TestCase;
 
-class MarketServiceTest extends TestCase
+class NewMarketServiceTest extends TestCase
 {
     private $lotRepository;
     private $userRepository;
@@ -103,7 +103,7 @@ class MarketServiceTest extends TestCase
 
     // TODO
 
-    
+
 //    public function testBuyLot()
 //    {
 //        $user = factory(User::class)->make();
