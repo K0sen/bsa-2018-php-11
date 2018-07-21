@@ -16,4 +16,6 @@ interface LotRepository
     public function findAll();
 
     public function findActiveLot(int $userId) : ?Lot;
+
+    public function findBySellerAndCurrency(int $userId, int $currencyId): ?Lot;
 }

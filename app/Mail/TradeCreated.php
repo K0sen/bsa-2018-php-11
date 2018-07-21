@@ -17,7 +17,7 @@ class TradeCreated extends Mailable
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param Trade $trade
      */
     public function __construct(Trade $trade)
     {
@@ -31,6 +31,6 @@ class TradeCreated extends Mailable
      */
     public function build()
     {
-
+        return $this->view('mail.check');
     }
 }
