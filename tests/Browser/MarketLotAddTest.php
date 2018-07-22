@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Browser;
 
 use App\Entity\Currency;
 use App\Entity\Money;
@@ -31,16 +31,16 @@ class MarketLotAddTest extends DuskTestCase
 
             $browser->loginAs($user)
                 ->visit('/market/lots/add')
-                ->assertPathIs('/market/lots/add');
-//                ->type('currency_id', $currency->id)
-//                ->type('seller_id', $user->id)
-//                ->type('short_name', 'BiTCoIn')
-//                ->type('date_time_open', 1587040303)
-//                ->type('date_time_close', 1587090303)
-//                ->type('price', 666.99)
-//                ->press('Add')
-//                ->pause(1000)
-//                ->assertSee('Lot has been added successfully!');
+                ->assertPathIs('/market/lots/add')
+                ->type('currency_id', $currency->id)
+                ->type('seller_id', $user->id)
+                ->type('short_name', 'BiTCoIn')
+                ->type('date_time_open', 1587040303)
+                ->type('date_time_close', 1587090303)
+                ->type('price', 666.99)
+                ->press('Add')
+                ->pause(1000)
+                ->assertSee('Lot has been added successfully!');
         });
     }
 }
