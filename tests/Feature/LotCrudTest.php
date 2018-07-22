@@ -28,8 +28,8 @@ class LotCrudTest extends TestCase
         $response = $this->actingAs($user)->json('POST', '/api/v1/lots', [
             "currency_id" => $currency->id,
             'seller_id' => $user->id,
-            "date_time_open" => Carbon::now(),
-            "date_time_close" => Carbon::now() + 3600,
+            "date_time_open" => Carbon::now()->toDateTimeString(),
+            "date_time_close" => Carbon::tomorrow()->toDateTimeString(),
             "price" => 666.99
         ]);
 //        dump($response);
