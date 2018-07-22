@@ -6,6 +6,7 @@ use App\Entity\Money;
 use App\Entity\Wallet;
 use App\Request\Contracts\CreateWalletRequest;
 use App\Request\Contracts\MoneyRequest;
+use App\User;
 
 interface WalletService
 {
@@ -20,6 +21,7 @@ interface WalletService
     /**
      * Add money to a wallet.
      *
+     * @param MoneyRequest $moneyRequest
      * @return Money
      */
     public function addMoney(MoneyRequest $moneyRequest) : Money;
@@ -27,8 +29,10 @@ interface WalletService
     /**
      * Take money from a wallet.
      *
-     * @param MoneyRequest $currencyRequest
+     * @param MoneyRequest $moneyRequest
      * @return Money
      */
     public function takeMoney(MoneyRequest $moneyRequest) : Money;
+
+    public function makeExchange(int $sellerId, User $buyer, float $amount, int $currencyId): void;
 }

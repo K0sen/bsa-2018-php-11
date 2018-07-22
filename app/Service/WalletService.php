@@ -10,6 +10,7 @@ use App\Repository\Contracts\WalletRepository;
 use App\Request\Contracts\CreateWalletRequest;
 use App\Request\Contracts\MoneyRequest;
 use App\Service\Contracts\WalletService as IWalletService;
+use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class WalletService implements IWalletService
@@ -71,5 +72,33 @@ class WalletService implements IWalletService
         }
 
         return $this->moneyRepository->save($money);
+    }
+
+    /**
+     * Makes exchange between buyer and seller wallets
+     *
+     * @param int   $sellerId
+     * @param User  $buyer
+     * @param float $amount
+     * @param int   $currencyId
+     * @throws \LogicException
+     */
+    public function makeExchange(int $sellerId, User $buyer, float $amount, int $currencyId): void
+    {
+        $buyerMoney = $this->moneyRepository->findByUserAndCurrency($buyer->id, $currencyId);
+        $sellerMoney = $this->moneyRepository->findByUserAndCurrency($sellerId, $currencyId);
+        if (!$buyerMoney) {
+            throw new \LogicException('No buyer money found');
+        } else if (!$sellerMoney) {
+            throw new \LogicException('No seller money found');
+        }
+
+        // don't really understand how should happened the process... Don't have much time to mess up here
+        $this->takeMoney(
+            new \App\Request\MoneyRequest($buyerMoney->id, $currencyId, 1)
+        );
+        $this->addMoney(
+            new \App\Request\MoneyRequest($sellerMoney->id, $currencyId, $amount)
+        );
     }
 }

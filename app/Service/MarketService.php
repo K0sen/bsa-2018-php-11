@@ -122,7 +122,7 @@ class MarketService implements IMarketService
             throw new BuyInactiveLotException('Lot is already closed');
         }
 
-        $this->makeExchange($lot->seller_id, $buyer, $lot->price, $lot->currency_id);
+        $this->walletService->makeExchange($lot->seller_id, $buyer, $lot->price, $lot->currency_id);
         $trade = $this->tradeRepository->add(
             new Trade([
                 'user_id' => $lotRequest->getUserId(),
@@ -133,34 +133,6 @@ class MarketService implements IMarketService
         Mail::to($buyer)->send(new TradeCreated($trade));
 
         return $trade;
-    }
-
-    /**
-     * Makes exchange between buyer and seller wallets
-     *
-     * @param int   $sellerId
-     * @param User  $buyer
-     * @param float $amount
-     * @param int   $currencyId
-     * @throws \LogicException
-     */
-    public function makeExchange(int $sellerId, User $buyer, float $amount, int $currencyId): void
-    {
-        $buyerMoney = $this->moneyRepository->findByUserAndCurrency($buyer->id, $currencyId);
-        $sellerMoney = $this->moneyRepository->findByUserAndCurrency($sellerId, $currencyId);
-        if (!$buyerMoney) {
-            throw new \LogicException('No buyer money found');
-        } else if (!$sellerMoney) {
-            throw new \LogicException('No seller money found');
-        }
-
-        // don't really understand how should happened the process... Don't have much time to mess up here
-        $this->walletService->takeMoney(
-            new MoneyRequest($buyerMoney->id, $currencyId, 1)
-        );
-        $this->walletService->addMoney(
-            new MoneyRequest($sellerMoney->id, $currencyId, $amount)
-        );
     }
 
     /** {@inheritdoc} */
