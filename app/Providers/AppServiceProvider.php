@@ -10,6 +10,8 @@ use App\Repository\Contracts\{
     UserRepository as IUserRepository,
     WalletRepository as IWalletRepository
 };
+use App\Request\AddLotRequest;
+use App\Request\Contracts\AddLotRequest as IAddLotRequest;
 use App\Service\Contracts\{
     CurrencyService as ICurrencyService,
     WalletService as IWalletService,
