@@ -27,7 +27,6 @@ class MarketLotAddTest extends DuskTestCase
                 'currency_id' => $currency->id,
                 'amount' => 100
             ]);
-            factory(Money::class)->create();
 
             $browser->loginAs($user)
                 ->visit('/market/lots/add')
