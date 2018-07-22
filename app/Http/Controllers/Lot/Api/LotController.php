@@ -56,13 +56,13 @@ class LotController extends Controller
     {
         $lot = $this->marketService->addLot($addLotRequest);
 
-        return response()->json($lot);
+        return response()->json($lot, 201);
     }
 
     public function addTrade(BuyLotRequest $buyLotRequest)
     {
         $lot = $this->marketService->buyLot($buyLotRequest);
 
-        return response()->json($lot);
+        return response()->json($lot, 201);
     }
 }
